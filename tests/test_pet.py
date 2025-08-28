@@ -1,5 +1,4 @@
 from http.client import responses
-from tkinter.font import names
 
 import jsonschema
 
