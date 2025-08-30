@@ -112,16 +112,16 @@ class TestPet:
             pet_id = create_pet["id"]
 
         with allure.step("Отправка запроса на удаление питомца по id"):
-            response1 = requests.delete(url=f'{BASE_URL}/pet/{pet_id}')
+            response = requests.delete(url=f'{BASE_URL}/pet/{pet_id}')
 
         with allure.step('Проверка статуса ответа'):
-            assert response1.status_code == 200
+            assert response.status_code == 200
 
         with allure.step("Отправка запроса на получение информации об удаленном питомце"):
-            response2 = requests.get(url=f'{BASE_URL}/pet/{pet_id}')
+            response = requests.get(url=f'{BASE_URL}/pet/{pet_id}')
 
         with allure.step('Проверка статуса ответа'):
-            assert response2.status_code == 404
+            assert response.status_code == 404
 
     @allure.title("Обновление информации о питомце")
     def test_update_pet(self, create_pet):
@@ -137,9 +137,6 @@ class TestPet:
         with allure.step('Отправка запроса на обновление питомца'):
             response = requests.put(url=f'{BASE_URL}/pet', json=payload)
             response_json = response.json()
-            print(payload)
-            print(response_json)
-
 
         with allure.step('Проверка статуса ответа'):
             assert response.status_code == 200
