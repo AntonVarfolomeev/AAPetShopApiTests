@@ -1,6 +1,8 @@
 from http.client import responses
+from unittest import expectedFailure
 
 import jsonschema
+import pytest
 
 from .schemas.pet_schema import PET_SCHEMA
 
@@ -146,3 +148,35 @@ class TestPet:
             assert response_json['id'] == payload['id'], "id питомца не совпадает с ожидаемым"
             assert response_json['name'] == payload['name'], "имя питомца не совпадает с ожидаемым"
             assert response_json['status'] == payload['status'], "статус питомца не совпадает с ожидаемым"
+
+    @allure.title("Получение списка питомцев по статусу")
+    @pytest.mark.parametrize(
+        "status, expected_status_code",
+        [
+            ("available", 200),
+            ("pending", 200),
+            ("sold", 200)
+         ]
+    )
+    def test_get_pets_by_status(self, status, expected_status_code):
+        with allure.step(f"Отправка запроса на получение питомцев по статусу {status}"):
+            response = requests.get(url=f'{BASE_URL}/pet/findByStatus', params={"status": status})
+
+        with allure.step('Проверка статуса ответа и формата данных для корректного сценария'):
+            assert response.status_code == expected_status_code
+            assert isinstance(response.json(), list)
+
+    @allure.title("Получение списка питомцев по некорректному статусу")
+    @pytest.mark.parametrize(
+        "status, expected_status_code",
+        [
+            ("string", 400),
+            ("", 400)
+        ]
+    )
+    def test_get_pets_by_wrong_status(self, status, expected_status_code):
+        with allure.step(f"Отправка запроса на получение питомцев по статусу {status}"):
+            response = requests.get(url=f'{BASE_URL}/pet/findByStatus', params={"status": status})
+
+        with allure.step(f"Проверка статуса ответа для некорректного сценария {status}"):
+            assert response.status_code == expected_status_code
