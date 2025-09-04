@@ -84,7 +84,7 @@ class TestStore:
         with allure.step('Проверка статуса ответа'):
             assert response.status_code == 404
 
-    @pytest.mark.xfail(reason="Сервер возвращает 500 на /store/inventory")
+
     @allure.title("Получение инвентаря магазина")
     def test_get_inventory(self):
         with allure.step("Отправка запроса на получение инвентаря"):
@@ -94,6 +94,4 @@ class TestStore:
             data = response.json()
             assert response.status_code == 200
             jsonschema.validate(data, INVENTORY_SCHEMA)
-           # assert response.status_code == 200
-           # assert (data["approved"] == 57)
-           # assert (data["delivered"] == 50)
+
