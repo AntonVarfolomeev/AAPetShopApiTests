@@ -3,6 +3,7 @@ from http.client import responses
 import jsonschema
 import pytest
 
+from .schemas.inventory_schema import INVENTORY_SCHEMA
 from .schemas.store_schema import STORE_SCHEMA
 
 import allure
@@ -83,14 +84,16 @@ class TestStore:
         with allure.step('Проверка статуса ответа'):
             assert response.status_code == 404
 
+    @pytest.mark.xfail(reason="Сервер возвращает 500 на /store/inventory")
     @allure.title("Получение инвентаря магазина")
     def test_get_inventory(self):
         with allure.step("Отправка запроса на получение инвентаря"):
             response = requests.get(url=f'{BASE_URL}/store/inventory')
 
-        with allure.step('Проверка статуса ответа и id'):
+        with allure.step('Проверка статуса ответа'):
             data = response.json()
-            assert response.status_code == 500
+            assert response.status_code == 200
+            jsonschema.validate(data, INVENTORY_SCHEMA)
            # assert response.status_code == 200
            # assert (data["approved"] == 57)
            # assert (data["delivered"] == 50)
